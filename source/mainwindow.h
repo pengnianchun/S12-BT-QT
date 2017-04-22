@@ -8,6 +8,7 @@
 #include <QProgressDialog>
 #include "CANBootloader.h"
 #include "controlcan.h"
+#include "devaddrinputdialog.h"
 
 namespace Ui {
 class MainWindow;

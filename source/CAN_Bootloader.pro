@@ -18,24 +18,27 @@ win32:LIBS += -L$$PWD/../lib/ -lUSB2XXX
 DEFINES += LANGUE_EN
 
 RESOURCES += \
-    ../source/image.qrc
+    image.qrc
 
 RC_FILE = \
-    ../source/ico.rc
+    ico.rc
 
 FORMS += \
-    ../source/mainwindow_ch.ui \
-    ../source/mainwindow_en.ui
+    mainwindow_ch.ui \
+    mainwindow_en.ui \
+    devaddrinputdialog.ui
 
 OTHER_FILES += \
-    ../source/ico.rc
+    ico.rc
 
 HEADERS += \
-    ../source/CANBootloader.h \
-    ../source/ErrorType.h \
-    ../source/mainwindow.h \
-    ControlCAN.h
+    CANBootloader.h \
+    ErrorType.h \
+    mainwindow.h \
+    ControlCAN.h \
+    devaddrinputdialog.h
 
 SOURCES += \
-    ../source/main.cpp \
-    ../source/mainwindow.cpp
+    main.cpp \
+    mainwindow.cpp \
+    devaddrinputdialog.cpp
