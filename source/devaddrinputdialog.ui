@@ -13,6 +13,10 @@
   <property name="windowTitle">
    <string>Scan Node</string>
   </property>
+  <property name="windowIcon">
+   <iconset resource="image.qrc">
+    <normaloff>:/images/easyicon_net.png</normaloff>:/images/easyicon_net.png</iconset>
+  </property>
   <layout class="QGridLayout" name="gridLayout">
    <item row="0" column="0">
     <layout class="QVBoxLayout" name="verticalLayout" stretch="5,1">

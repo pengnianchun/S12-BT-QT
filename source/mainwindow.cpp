@@ -58,6 +58,10 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->baudRateComboBox->setCurrentIndex(8);
     ui->channelIndexComboBox->setCurrentIndex(0);
     ui->allNodeCheckBox->hide();
+
+    ui->contactUsAction->setVisible(false);
+    ui->actionCAN_BaudRateCalculator->setVisible(false);
+    ui->menu_4->menuAction()->setVisible(false);
 }
 
 MainWindow::~MainWindow()
@@ -331,7 +335,8 @@ void MainWindow::on_updateFirmwarePushButton_clicked()
                 return;
             }
         }
-        uint32_t startAddr = ui->startAddrLineEdit->text().toInt(NULL,16);
+        QString startAddrString = "0x08008000";
+        uint32_t startAddr = startAddrString.toInt(NULL,16);
         ret = CBL_EraseFlash(ui->deviceIndexComboBox->currentIndex(),
                              ui->channelIndexComboBox->currentIndex(),
                              NodeAddr,
@@ -347,9 +352,8 @@ void MainWindow::on_updateFirmwarePushButton_clicked()
 #endif
             CBL_CloseDevice(ui->deviceIndexComboBox->currentIndex());
             return;
-        } else {
-            qDebug()<<"CBL_EraseFlash = "<<ret;
         }
+        qDebug()<<"CBL_EraseFlash ret = "<<ret;
         if(ui->allNodeCheckBox->isChecked()){
             Sleep(1000);
         }
@@ -378,7 +382,7 @@ void MainWindow::on_updateFirmwarePushButton_clicked()
                                  FirmwareData,
                                  read_data_num,
                                  10000);
-            qDebug()<<"ret = "<<ret;
+            qDebug()<<" --- CBL_WriteBlock ret = "<<ret;
             if(ret != CBL_ERR_SUCCESS){
 #ifdef LANGUE_EN
                 QMessageBox::warning(this,"Warning","Write flash faild!");
@@ -428,7 +432,7 @@ void MainWindow::on_scanNodeAction_triggered()
     int nodeAddr = 0;
     DevAddrInputDialog *pDevAddrInputDialog = new DevAddrInputDialog();
     if(pDevAddrInputDialog->exec() == QDialog::Accepted){
-        nodeAddr = pDevAddrInputDialog->StartAddr;
+        nodeAddr = pDevAddrInputDialog->get_start_address();
     }else{
         return ;
     }
@@ -556,6 +560,7 @@ void MainWindow::on_executeFirmwarePushButton_clicked()
         return;
     }
     uint16_t NodeAddr;
+    QString startAddrString = "0x08008000";
     if(ui->allNodeCheckBox->isChecked()){
         NodeAddr = 0x00;
     }else{
@@ -564,7 +569,7 @@ void MainWindow::on_executeFirmwarePushButton_clicked()
     ret = CBL_ExcuteApp(ui->deviceIndexComboBox->currentIndex(),
                         ui->channelIndexComboBox->currentIndex(),
                         NodeAddr,
-                        ui->startAddrLineEdit->text().toInt(NULL,16));
+                        startAddrString.toInt(NULL,16));
     if(ret != CBL_ERR_SUCCESS){
 #ifdef LANGUE_EN
         QMessageBox::warning(this,"Warning","Execute firmware faild!");
@@ -603,7 +608,7 @@ void MainWindow::on_setbaudRatePushButton_clicked()
         CBL_CloseDevice(ui->deviceIndexComboBox->currentIndex());
         return;
     }
-    QString str = ui->newBaudRateComboBox->currentText();
+    QString str = "250Kbps";
     str.resize(str.length()-4);
     int baud = str.toInt(NULL,10)*1000;
     CAN_InitConfig.CAN_BRP = CAN_BaudRateInitTab[CAN_GetBaudRateNum(baud)].PreScale;
@@ -631,8 +636,8 @@ void MainWindow::on_setbaudRatePushButton_clicked()
 #endif
         return;
     }
-    ui->baudRateComboBox->setCurrentIndex(ui->newBaudRateComboBox->currentIndex());
-    CBL_CloseDevice(ui->deviceIndexComboBox->currentIndex());
+    //ui->baudRateComboBox->setCurrentIndex(ui->newBaudRateComboBox->currentIndex());
+    CBL_CloseDevice(0);
 }
 
 void MainWindow::on_contactUsAction_triggered()
@@ -658,10 +663,10 @@ void MainWindow::on_contactUsAction_triggered()
 void MainWindow::on_aboutAction_triggered()
 {
     QString AboutStr;
-    AboutStr = "Ginkgo USB-CAN Bootloader 1.2.0\n";
-    AboutStr.append("ViewTool Virtual Instrument 2009-2013 Copyright\n");
-    AboutStr.append("Hardware Support: Ginkgo 2 USB-CAN Adapter");
-    QMessageBox::about(this,"About Ginkgo USB-CAN Bootloader",AboutStr);
+    AboutStr = "S12 USB-CAN Bootloader 1.0.0\n";
+    AboutStr.append("Shanghai Fangyan 2015-2017 Copyright\n");
+    AboutStr.append("Hardware Support: S12 USB-CAN Adapter");
+    QMessageBox::about(this,"About S12 USB-CAN Bootloader",AboutStr);
 }
 
 void MainWindow::on_exitAction_triggered()
@@ -688,19 +693,4 @@ void MainWindow::sendData(int ID, char* msg, uint length) {
     memcpy(CAN_Data, msg, sizeof(VCI_CAN_OBJ));
     long MsgNum = VCI_Transmit(DevType, DevIndex, CANIndex, CAN_Data, length);
     qDebug()<<" --- send "<<MsgNum<<" CAN frame !";
-
-//    VCI_CAN_OBJ CAN_Data[length];
-//    memset(CAN_Data, 0, sizeof(VCI_CAN_OBJ)*length);
-//    for(int i=0; i<length; i++) {
-//        CAN_Data[i].ID = i;
-//        CAN_Data[i].SendType = 0;
-//        CAN_Data[i].RemoteFlag = 0;
-//        CAN_Data[i].ExternFlag = 0;
-//        CAN_Data[i].DataLen = length;
-//        for(int j=0; j<(CAN_Data[i].DataLen); j++) {
-//            CAN_Data[i].Data[j] = j;
-//        }
-//    }
-//    long MsgNum = VCI_Transmit(DevType, DevIndex, CANIndex, CAN_Data, length);
-
 }
