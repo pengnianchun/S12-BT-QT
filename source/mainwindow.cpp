@@ -57,6 +57,7 @@ MainWindow::MainWindow(QWidget *parent) :
     qDebug()<<" --- init ";
     ui->baudRateComboBox->setCurrentIndex(8);
     ui->channelIndexComboBox->setCurrentIndex(0);
+    ui->allNodeCheckBox->hide();
 }
 
 MainWindow::~MainWindow()
@@ -120,6 +121,7 @@ void MainWindow::on_openFirmwareFilePushButton_clicked()
     }
     ui->firmwareLineEdit->setText(fileName);
 }
+
 int MainWindow::CAN_GetBaudRateNum(unsigned int BaudRate)
 {
     switch(BaudRate){
@@ -165,6 +167,7 @@ bool MainWindow::DeviceConfig(void)
         return false;
     }
     ret = CBL_OpenDevice(ui->deviceIndexComboBox->currentIndex());
+    qDebug()<<" --- Open Device ret = "<<ret;
     if(ret != CBL_ERR_SUCCESS){
 #ifdef LANGUE_EN
         QMessageBox::warning(this,"Warning","Open device faild!");
@@ -223,25 +226,16 @@ void MainWindow::on_updateFirmwarePushButton_clicked()
     bool ConfFlag;
     uint32_t appversion,appType;
     uint8_t FirmwareData[1026]={0};
-    if(ui->allNodeCheckBox->isChecked()){
-        if(ui->nodeListTableWidget->rowCount()<=0){
+
+    if(ui->nodeListTableWidget->currentIndex().row()<0){
 #ifdef LANGUE_EN
-            QMessageBox::warning(this,"Warning","No CAN node!");
+        QMessageBox::warning(this,"Warning","Please Select a CAN node!");
 #else
-            QMessageBox::warning(this,QStringLiteral("警告"),QStringLiteral("无任何节点！"));
+        QMessageBox::warning(this,QStringLiteral("警告"),QStringLiteral("请选择节点！"));
 #endif
-            return;
-        }
-    }else{
-        if(ui->nodeListTableWidget->currentIndex().row()<0){
-#ifdef LANGUE_EN
-            QMessageBox::warning(this,"Warning","Please Select a CAN node!");
-#else
-            QMessageBox::warning(this,QStringLiteral("警告"),QStringLiteral("请选择节点！"));
-#endif
-            return;
-        }
+        return;
     }
+
     uint16_t NodeAddr;
     ConfFlag = DeviceConfig();
     if(!ConfFlag){
@@ -430,9 +424,16 @@ void MainWindow::on_openFirmwareFileAction_triggered()
 
 void MainWindow::on_scanNodeAction_triggered()
 {
-#define MAX_NODE_NUM     0x015  //0x400
     int ret;
+    int nodeAddr = 0;
+    DevAddrInputDialog *pDevAddrInputDialog = new DevAddrInputDialog();
+    if(pDevAddrInputDialog->exec() == QDialog::Accepted){
+        nodeAddr = pDevAddrInputDialog->StartAddr;
+    }else{
+        return ;
+    }
     bool ConfFlag = DeviceConfig();
+    qDebug()<<" --- config device result = "<<ConfFlag;
     if(!ConfFlag){
         CBL_CloseDevice(ui->deviceIndexComboBox->currentIndex());
         return;
@@ -441,59 +442,90 @@ void MainWindow::on_scanNodeAction_triggered()
     ui->nodeListTableWidget->setSelectionBehavior(QAbstractItemView::SelectRows);
     ui->nodeListTableWidget->setEditTriggers(QAbstractItemView::NoEditTriggers);
     ui->nodeListTableWidget->setRowCount(0);
+
+    if(0 >= nodeAddr) {
 #ifdef LANGUE_EN
-    QProgressDialog scanNodeProcess("Scanning CAN node...","Cancel",0,MAX_NODE_NUM,this);
-    scanNodeProcess.setWindowTitle("Scanning CAN node");
+      QMessageBox::warning(this,"Warning","No CAN node address!");
 #else
-    QProgressDialog scanNodeProcess(QStringLiteral("正在扫描节点..."),QStringLiteral("取消"),0,MAX_NODE_NUM,this);
-    scanNodeProcess.setWindowTitle(QStringLiteral("扫描节点"));
+      QMessageBox::warning(this,QStringLiteral("提示"),QStringLiteral("地址扫描失败！"));
 #endif
-    scanNodeProcess.setModal(true);
-    scanNodeProcess.show();
-    QCoreApplication::processEvents(QEventLoop::AllEvents);
-    for(int i=1;i<MAX_NODE_NUM;i++){
-        uint32_t appversion,appType;
-        ret = CBL_NodeCheck(ui->deviceIndexComboBox->currentIndex(),
-                            ui->channelIndexComboBox->currentIndex(),
-                            i,
-                            &appversion,
-                            &appType,
-                            10);
-        qDebug()<<" --- CBL_NodeCheck result = "<<ret;
-        qDebug()<<" --- CBL_NodeCheck ui->deviceIndexComboBox->currentIndex()  = "<<ui->deviceIndexComboBox->currentIndex();
-        qDebug()<<" --- CBL_NodeCheck ui->channelIndexComboBox->currentIndex() = "<<ui->channelIndexComboBox->currentIndex();
-        qDebug()<<" --- CBL_NodeCheck i          = "<<i;
-        qDebug()<<" --- CBL_NodeCheck appversion = "<<appversion;
-        qDebug()<<" --- CBL_NodeCheck appType    = "<<appType;
-        if(ret == CBL_ERR_SUCCESS){
-            ui->nodeListTableWidget->setRowCount(ui->nodeListTableWidget->rowCount()+1);
-            ui->nodeListTableWidget->setRowHeight(ui->nodeListTableWidget->rowCount()-1,20);
-            QString str;
-            str.sprintf("0x%X",i);
-            QTableWidgetItem *item = new QTableWidgetItem(str);
-            ui->nodeListTableWidget->setItem(ui->nodeListTableWidget->rowCount()-1,0,item);
-            if(appType == 0){
-                str = "Boot";
-            }else{
-                str = "App";
-            }
-            item = new QTableWidgetItem(str);
-            ui->nodeListTableWidget->setItem(ui->nodeListTableWidget->rowCount()-1,1,item);
-            str.sprintf("v%d.%d",(((appversion>>24)&0xFF)*10)+((appversion>>16)&0xFF),(((appversion>>8)&0xFF)*10)+(appversion&0xFF));
-            item = new QTableWidgetItem(str);
-            ui->nodeListTableWidget->setItem(ui->nodeListTableWidget->rowCount()-1,2,item);
-            qDebug()<<" --- CBL_NodeCheck result = CBL_SUCCESS";
-        } else {
-            qDebug()<<" --- CBL_NodeCheck result = CBL_ERROR";
-        }
-        scanNodeProcess.setValue(i);
-        QCoreApplication::processEvents(QEventLoop::AllEvents);
-        if(scanNodeProcess.wasCanceled()){
-            CBL_CloseDevice(ui->deviceIndexComboBox->currentIndex());
-            return;
-        }
+      qDebug()<<" --- CBL_NodeCheck result = CBL_ERROR";
+      CBL_CloseDevice(ui->deviceIndexComboBox->currentIndex());
+      return;
     }
-    CBL_CloseDevice(ui->deviceIndexComboBox->currentIndex());
+
+    bool bFind = false;
+    if(0 < nodeAddr){
+        uint32_t appversion,appType;
+        int i = 0;
+    #ifdef LANGUE_EN
+        QProgressDialog scanNodeProcess("Scanning CAN node...","Cancel",0,100,this);
+        scanNodeProcess.setWindowTitle("Scanning CAN node");
+    #else
+        QProgressDialog scanNodeProcess(QStringLiteral("正在扫描节点..."),QStringLiteral("取消"),0,100,this);
+        scanNodeProcess.setWindowTitle(QStringLiteral("扫描节点"));
+    #endif
+        scanNodeProcess.setModal(true);
+        scanNodeProcess.show();
+        QCoreApplication::processEvents(QEventLoop::AllEvents);
+        do{
+            ret = CBL_NodeCheck(ui->deviceIndexComboBox->currentIndex(),
+                                ui->channelIndexComboBox->currentIndex(),
+                                nodeAddr,
+                                &appversion,
+                                &appType,
+                                10);
+            qDebug()<<" --- CBL_NodeCheck result = "<<ret;
+            qDebug()<<" --- CBL_NodeCheck ui->deviceIndexComboBox->currentIndex()  = "<<ui->deviceIndexComboBox->currentIndex();
+            qDebug()<<" --- CBL_NodeCheck ui->channelIndexComboBox->currentIndex() = "<<ui->channelIndexComboBox->currentIndex();
+            qDebug()<<" --- CBL_NodeCheck nodeAddr   = "<<nodeAddr;
+            qDebug()<<" --- CBL_NodeCheck appversion = "<<appversion;
+            qDebug()<<" --- CBL_NodeCheck appType    = "<<appType;
+            if(ret == CBL_ERR_SUCCESS){
+                ui->nodeListTableWidget->setRowCount(ui->nodeListTableWidget->rowCount()+1);
+                ui->nodeListTableWidget->setRowHeight(ui->nodeListTableWidget->rowCount()-1,20);
+                QString str;
+                str.sprintf("0x%X",nodeAddr);
+                QTableWidgetItem *item = new QTableWidgetItem(str);
+                ui->nodeListTableWidget->setItem(ui->nodeListTableWidget->rowCount()-1,0,item);
+                if(appType == 0){
+                    str = "Boot";
+                }else{
+                    str = "App";
+                }
+                item = new QTableWidgetItem(str);
+                ui->nodeListTableWidget->setItem(ui->nodeListTableWidget->rowCount()-1,1,item);
+                str.sprintf("v%d.%d",(((appversion>>24)&0xFF)*10)+((appversion>>16)&0xFF),(((appversion>>8)&0xFF)*10)+(appversion&0xFF));
+                item = new QTableWidgetItem(str);
+                ui->nodeListTableWidget->setItem(ui->nodeListTableWidget->rowCount()-1,2,item);
+                qDebug()<<" --- CBL_NodeCheck result = CBL_SUCCESS";
+                bFind = true;
+                CBL_CloseDevice(ui->deviceIndexComboBox->currentIndex());
+            }
+            if(i>99) {
+                i = 0;
+            }
+            scanNodeProcess.setValue(i);
+            i++;
+            QCoreApplication::processEvents(QEventLoop::AllEvents);
+            if(scanNodeProcess.wasCanceled()){
+                bFind = true;
+                CBL_CloseDevice(ui->deviceIndexComboBox->currentIndex());
+                return;
+            }
+        } while(!bFind);
+
+    } else {
+#ifdef LANGUE_EN
+            QMessageBox::warning(this,"Warning","Please input valid address!");
+#else
+            QMessageBox::warning(this,QStringLiteral("警告"),QStringLiteral("请输入有效地址值！"));
+#endif
+        qDebug()<<" --- CBL_NodeCheck input value is invalid";
+        CBL_CloseDevice(ui->deviceIndexComboBox->currentIndex());
+        return;
+    }
+
 }
 
 void MainWindow::on_executeFirmwarePushButton_clicked()
