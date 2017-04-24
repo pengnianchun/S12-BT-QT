@@ -27,25 +27,11 @@
 #define ERR_CMD_FAILED				(-17)	//执行命令失败错误码
 #define	ERR_BUFFER_CREATE			(-18)	//内存不足
 
-//ULONG VCI_Transmit(DWORD DevType, DWORD DevIndex, DWORD CANIndex, PVCI_CAN_OBJ pSend, ULONG Len); 其中PVCI_CAN_OBJ是一个结构，
-//typedef struct _VCI_CAN_OBJ {
-//    UINT ID;
-//    UINT TimeStamp;
-//    BYTE TimeFlag;
-//    BYTE SendType;
-//    BYTE RemoteFlag;
-//    BYTE ExternFlag;
-//    BYTE DataLen;
-//    BYTE Data[8];
-//    BYTE Reserved[3];
-//} VCI_CAN_OBJ, *PVCI_CAN_OBJ;
-
 #ifdef __cplusplus
 extern "C"
 {
 #endif
 void WINAPI VTI_GetErrorString(int32_t ErrorValue,int8_t* pErrorString);
-//ULONG WINAPI VCI_Transmit(DWORD DevType, DWORD DevIndex, DWORD CANIndex, PVCI_CAN_OBJ pSend, ULONG Len);
 #ifdef __cplusplus
 }
 #endif
