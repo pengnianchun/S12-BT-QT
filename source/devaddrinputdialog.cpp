@@ -42,3 +42,7 @@ void DevAddrInputDialog::on_pushButtonCancel_clicked()
 {
     this->reject();
 }
+
+int DevAddrInputDialog::get_start_address() {
+    return StartAddr;
+}

@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Ginkgo USB-CAN Bootloader</string>
+   <string>S12 USB-CAN Bootloader</string>
   </property>
   <property name="windowIcon">
    <iconset resource="image.qrc">
@@ -318,36 +318,6 @@
                    <string>3</string>
                   </property>
                  </item>
-                 <item>
-                  <property name="text">
-                   <string>4</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>5</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>6</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>7</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>8</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>9</string>
-                  </property>
-                 </item>
                 </widget>
                </item>
               </layout>
@@ -392,193 +362,6 @@
                </item>
               </layout>
              </item>
-             <item>
-              <layout class="QHBoxLayout" name="horizontalLayout_4">
-               <item>
-                <widget class="QLabel" name="label_4">
-                 <property name="text">
-                  <string>起始地址(Hex)：</string>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QLineEdit" name="startAddrLineEdit">
-                 <property name="minimumSize">
-                  <size>
-                   <width>60</width>
-                   <height>0</height>
-                  </size>
-                 </property>
-                 <property name="text">
-                  <string>08008000</string>
-                 </property>
-                </widget>
-               </item>
-              </layout>
-             </item>
-             <item>
-              <layout class="QHBoxLayout" name="horizontalLayout_9">
-               <item>
-                <widget class="QLabel" name="label_6">
-                 <property name="text">
-                  <string>新波特率：</string>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QComboBox" name="newBaudRateComboBox">
-                 <property name="minimumSize">
-                  <size>
-                   <width>80</width>
-                   <height>0</height>
-                  </size>
-                 </property>
-                 <item>
-                  <property name="text">
-                   <string>1000 Kbps</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>900 Kbps</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>800 Kbps</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>666 Kbps</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>600 Kbps</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>500 Kbps</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>400 Kbps</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>300 Kbps</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>250 Kbps</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>225 Kbps</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>200 Kbps</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>160 Kbps</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>150 Kbps</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>144 Kbps</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>125 Kbps</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>120 Kbps</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>100 Kbps</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>90 Kbps</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>80 Kbps</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>75 Kbps</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>60 Kbps</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>50 Kbps</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>40 Kbps</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>30 Kbps</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>20 Kbps</string>
-                  </property>
-                 </item>
-                </widget>
-               </item>
-              </layout>
-             </item>
-             <item>
-              <widget class="QPushButton" name="setbaudRatePushButton">
-               <property name="minimumSize">
-                <size>
-                 <width>80</width>
-                 <height>0</height>
-                </size>
-               </property>
-               <property name="text">
-                <string>设置波特率</string>
-               </property>
-              </widget>
-             </item>
-            </layout>
-           </item>
-           <item>
-            <layout class="QHBoxLayout" name="horizontalLayout_7">
              <item>
               <layout class="QHBoxLayout" name="horizontalLayout_3">
                <item>
@@ -725,6 +508,23 @@
                </item>
               </layout>
              </item>
+             <item>
+              <spacer name="horizontalSpacer">
+               <property name="orientation">
+                <enum>Qt::Horizontal</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>40</width>
+                 <height>20</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <layout class="QHBoxLayout" name="horizontalLayout_7">
              <item>
               <layout class="QHBoxLayout" name="horizontalLayout_5">
                <item>
