@@ -315,17 +315,18 @@ void MainWindow::on_updateFirmwarePushButton_clicked()
                                 &appversion,
                                 &appType,
                                 50);
-            if(ret == CBL_ERR_SUCCESS){
-                if(appType != 0){//当前固件不为Bootloader
-#ifdef LANGUE_EN
-                    QMessageBox::warning(this,"Warning","Current firmware is not bootloader!");
-#else
-                    QMessageBox::warning(this,QStringLiteral("警告"),QStringLiteral("当前固件不为Bootloader固件！"));
-#endif
-                    CBL_CloseDevice(ui->deviceIndexComboBox->currentIndex());
-                    return;
-                }
-            }else{
+//            if(ret == CBL_ERR_SUCCESS){
+//                if(appType != 0){//当前固件不为Bootloader
+//#ifdef LANGUE_EN
+//                    QMessageBox::warning(this,"Warning","Current firmware is not bootloader!");
+//#else
+//                    QMessageBox::warning(this,QStringLiteral("警告"),QStringLiteral("当前固件不为Bootloader固件！"));
+//#endif
+//                    CBL_CloseDevice(ui->deviceIndexComboBox->currentIndex());
+//                    return;
+//                }
+//            }else{
+            if(ret != CBL_ERR_SUCCESS){
 #ifdef LANGUE_EN
                 QMessageBox::warning(this,"Warning","Check CAN node faild!");
 #else
@@ -663,7 +664,7 @@ void MainWindow::on_contactUsAction_triggered()
 void MainWindow::on_aboutAction_triggered()
 {
     QString AboutStr;
-    AboutStr = "S12 USB-CAN Bootloader 1.0.0\n";
+    AboutStr = "S12 USB-CAN Bootloader 1.0.1\n";
     AboutStr.append("Shanghai Fangyan 2015-2017 Copyright\n");
     AboutStr.append("Hardware Support: S12 USB-CAN Adapter");
     QMessageBox::about(this,"About S12 USB-CAN Bootloader",AboutStr);
