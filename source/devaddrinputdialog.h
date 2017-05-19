@@ -15,11 +15,9 @@ public:
     explicit DevAddrInputDialog(QWidget *parent = 0);
     ~DevAddrInputDialog();
 
-    int get_start_address();
+    int get_device_addr();
 
 private slots:
-    void on_spinBoxStartAddr_valueChanged(int arg1);
-
     void on_pushButtonConfirm_clicked();
 
     void on_pushButtonCancel_clicked();
@@ -27,8 +25,6 @@ private slots:
 private:
     Ui::DevAddrInputDialog *ui;
 
-public:
-    int StartAddr;
 };
 
 #endif // DEVADDRINPUTDIALOG_H

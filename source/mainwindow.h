@@ -25,6 +25,7 @@ public:
     bool DeviceConfig(void);
     uint16_t crc16_ccitt(const uint8_t *buf, uint32_t len);
     void sendData(int ID, char* msg, uint length);
+    bool CheckUpdateNodeInformation();
     
 private slots:
     void on_openFirmwareFilePushButton_clicked();
@@ -49,6 +50,9 @@ private slots:
 
 private:
     Ui::MainWindow *ui;
+
+public:
+    int node_addr = 0;
 };
 
 #endif // MAINWINDOW_H

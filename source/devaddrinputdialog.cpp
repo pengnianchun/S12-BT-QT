@@ -7,16 +7,15 @@ DevAddrInputDialog::DevAddrInputDialog(QWidget *parent) :
 {
     ui->setupUi(this);
     setWindowFlags(Qt::CustomizeWindowHint | Qt::WindowCloseButtonHint);
-    ui->spinBoxStartAddr->setValue(18); // Set default value
-
+    ui->comboBox->setCurrentIndex(1); // Set default value
 #ifdef LANGUE_EN
     this->setWindowTitle("Scan Node");
     ui->label->setText("Please input addr(Hex)：");
     ui->pushButtonConfirm->setText("OK");
     ui->pushButtonCancel->setText("Cancel");
 #else
-    this->setWindowTitle("结点扫描");
-    ui->label->setText("请输入结点地址(Hex)：");
+    this->setWindowTitle("选择设备");
+    ui->label->setText("      请选择设备：");
     ui->pushButtonConfirm->setText("确定");
     ui->pushButtonCancel->setText("取消");
 #endif
@@ -27,14 +26,8 @@ DevAddrInputDialog::~DevAddrInputDialog()
     delete ui;
 }
 
-void DevAddrInputDialog::on_spinBoxStartAddr_valueChanged(int arg1)
-{
-    Q_UNUSED(arg1);
-}
-
 void DevAddrInputDialog::on_pushButtonConfirm_clicked()
 {
-    StartAddr = ui->spinBoxStartAddr->value();
     this->accept();
 }
 
@@ -43,6 +36,12 @@ void DevAddrInputDialog::on_pushButtonCancel_clicked()
     this->reject();
 }
 
-int DevAddrInputDialog::get_start_address() {
-    return StartAddr;
+int DevAddrInputDialog::get_device_addr() {
+    int addr = 0;
+    if( 1 == ui->comboBox->currentIndex()) {
+        addr = 0x12;
+    } else if (2 == ui->comboBox->currentIndex()) {
+        addr = 0x13;
+    }
+    return addr;
 }
