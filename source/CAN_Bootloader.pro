@@ -15,7 +15,7 @@ win32:LIBS += -L$$PWD/../lib/ -lGinkgo_Driver
 
 win32:LIBS += -L$$PWD/../lib/ -lUSB2XXX
 
-DEFINES += LANGUE_EN
+#DEFINES += LANGUE_EN
 
 RESOURCES += \
     image.qrc
