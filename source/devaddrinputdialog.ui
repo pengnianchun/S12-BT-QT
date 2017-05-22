@@ -34,22 +34,44 @@
        <item>
         <widget class="QLabel" name="label">
          <property name="text">
-          <string>请输入结点地址(Hex)：</string>
+          <string>      请选择设备：</string>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QSpinBox" name="spinBoxStartAddr">
-         <property name="minimum">
-          <number>1</number>
-         </property>
-         <property name="maximum">
-          <number>65535</number>
-         </property>
-         <property name="displayIntegerBase">
-          <number>16</number>
-         </property>
+        <widget class="QComboBox" name="comboBox">
+         <item>
+          <property name="text">
+           <string/>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>仪表FY-169</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>大模块</string>
+          </property>
+         </item>
         </widget>
+       </item>
+       <item>
+        <spacer name="horizontalSpacer_2">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeType">
+          <enum>QSizePolicy::Fixed</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>30</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
        </item>
       </layout>
      </item>
@@ -114,6 +136,8 @@
    </item>
   </layout>
  </widget>
- <resources/>
+ <resources>
+  <include location="image.qrc"/>
+ </resources>
  <connections/>
 </ui>
