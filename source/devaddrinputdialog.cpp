@@ -7,7 +7,7 @@ DevAddrInputDialog::DevAddrInputDialog(QWidget *parent) :
 {
     ui->setupUi(this);
     setWindowFlags(Qt::CustomizeWindowHint | Qt::WindowCloseButtonHint);
-    ui->comboBox->setCurrentIndex(1); // Set default value
+    ui->comboBox->setCurrentIndex(0); // Set default value
 #ifdef LANGUE_EN
     this->setWindowTitle("Scan Node");
     ui->label->setText("Please input addr(Hex)：");

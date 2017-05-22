@@ -1,1 +1,3 @@
 build/
+build*/
+source/CAN_Bootloader.pro.user

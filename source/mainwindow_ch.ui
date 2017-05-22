@@ -681,7 +681,7 @@
      <normaloff>:/images/gif_48_086.gif</normaloff>:/images/gif_48_086.gif</iconset>
    </property>
    <property name="text">
-    <string>扫描节点</string>
+    <string>选择设备</string>
    </property>
   </action>
   <action name="contactUsAction">
