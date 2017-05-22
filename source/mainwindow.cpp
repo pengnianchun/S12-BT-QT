@@ -680,7 +680,7 @@ void MainWindow::on_contactUsAction_triggered()
 void MainWindow::on_aboutAction_triggered()
 {
     QString AboutStr;
-    AboutStr = "S12 USB-CAN Bootloader 1.0.1\n";
+    AboutStr = "S12 USB-CAN Bootloader 1.0.2\n";
     AboutStr.append("Shanghai Fangyan 2015-2017 Copyright\n");
     AboutStr.append("Hardware Support: S12 USB-CAN Adapter");
     QMessageBox::about(this,"About S12 USB-CAN Bootloader",AboutStr);
