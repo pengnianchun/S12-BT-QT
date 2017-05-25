@@ -38,9 +38,9 @@ void DevAddrInputDialog::on_pushButtonCancel_clicked()
 
 int DevAddrInputDialog::get_device_addr() {
     int addr = 0;
-    if( 1 == ui->comboBox->currentIndex()) {
+    if( 0 == ui->comboBox->currentIndex()) {
         addr = 0x12;
-    } else if (2 == ui->comboBox->currentIndex()) {
+    } else if (1 == ui->comboBox->currentIndex()) {
         addr = 0x13;
     }
     return addr;
