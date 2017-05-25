@@ -44,6 +44,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    this->setWindowTitle(tr("S12 USB-CAN Bootloader Ver1.0.2"));
     ui->cmdListTableWidget->setColumnWidth(0,180);
 #ifdef LANGUE_EN
     ui->nodeListTableWidget->setColumnWidth(0,100);
