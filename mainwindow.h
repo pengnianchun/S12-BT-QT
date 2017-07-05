@@ -34,6 +34,8 @@ private slots:
 
     void on_pushButton_sync_2_clicked();
 
+    void on_pushButton_sync_3_clicked();
+
 private:
     Ui::MainWindow *ui;
     QTimer*  timer;

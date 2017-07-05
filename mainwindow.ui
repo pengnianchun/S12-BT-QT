@@ -139,6 +139,19 @@
      <string>更新固件</string>
     </property>
    </widget>
+   <widget class="QPushButton" name="pushButton_sync_3">
+    <property name="geometry">
+     <rect>
+      <x>400</x>
+      <y>150</y>
+      <width>121</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>执行固件</string>
+    </property>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menuBar">
    <property name="geometry">

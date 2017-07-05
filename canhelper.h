@@ -43,6 +43,7 @@ public:
 
     int excuteApp(DeviceType dType, quint32 flashStartAddr);
 
+    quint16 crc16Ccitt(const quint8 *buf, quint32 len);
 private:
     /*
      * Note: 数据接收函数。 接收一帧数据
@@ -50,6 +51,8 @@ private:
     int recv(quint32 canId, CanFrameFormat format, QByteArray &data, quint32 timeout);
 
     void clearBuffer();
+
+
 signals:
 
 protected:
