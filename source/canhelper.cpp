@@ -166,7 +166,7 @@ int CanHelper::nodeCheck(DeviceType dType, QString &firmware,  QString &version,
         return -1;
     }
 
-    quint32 appversion = quint32((array[0] << 12) | (array[1] << 8) | (array[2] << 4) | (array[3]));
+    //quint32 appversion = quint32((array[0] << 12) | (array[1] << 8) | (array[2] << 4) | (array[3]));
     version.sprintf("v%d.%d", ((array[0] << 4 ) | (array[1]) ), ((array[2] << 4) | array[3]));
     quint32 type = quint32(array[7]);
 
@@ -242,6 +242,7 @@ int CanHelper::eraseFlash(CanHelper::DeviceType dType, quint32 flashStartAddr, q
             return -1;
         }
     } while(!bFind);
+    Q_UNUSED(timeOut);
     return ret;
 }
 
@@ -338,7 +339,7 @@ int CanHelper::excuteApp(CanHelper::DeviceType dType, quint32 flashStartAddr)
  */
 int CanHelper::recv(quint32 canId, CanHelper::CanFrameFormat format, QByteArray &data, quint32 timeout)
 {
-    int timeCnt = 0;
+    quint32 timeCnt = 0;
     int recvLen = -1;
     VCI_CAN_OBJ rec[1];
     while(timeCnt < timeout) {
@@ -358,6 +359,7 @@ int CanHelper::recv(quint32 canId, CanHelper::CanFrameFormat format, QByteArray 
         Sleep(1);
         timeCnt ++;
     }
+    Q_UNUSED(format);
     return recvLen;
 }
 

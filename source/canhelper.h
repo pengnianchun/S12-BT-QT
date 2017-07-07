@@ -18,7 +18,7 @@ public:
     };
 
     enum DeviceType {
-        FY169 = 0x12,
+        FY169  = 0x12,
         BigDog = 0x13
     };
 
@@ -44,6 +44,7 @@ public:
     int excuteApp(DeviceType dType, quint32 flashStartAddr);
 
     quint16 crc16Ccitt(const quint8 *buf, quint32 len);
+
 private:
     /*
      * Note: 数据接收函数。 接收一帧数据
@@ -52,17 +53,12 @@ private:
 
     void clearBuffer();
 
-
-signals:
-
 protected:
     void run();
 
-
-
 private:
-    bool mInited = false;
-    DWORD mDevType = VCI_USBCAN2; // 适配器设备类型定义 ,  这个一般不用动
+    bool  mInited  = false;
+    DWORD mDevType = VCI_USBCAN2; // 适配器设备类型定义, 这个一般不用动
     qint64 mDevIndex = 0; // 设备索引，比如当只有一个USB-CAN适配器时，索引号为0，这时再插入一个USB-CAN适配器那么后面插入的这个设备索引号就是1，以此类推
     qint64 mCanIndex = 0; // can索引号： 0-> CAN1, 1-> CAN2
 
