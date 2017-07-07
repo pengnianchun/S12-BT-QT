@@ -3,7 +3,8 @@
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
-    ui(new Ui::MainWindow)
+    ui(new Ui::MainWindow),
+    helper(new CanHelper)
 {
     ui->setupUi(this);
     this->setFixedSize(800, 480);
