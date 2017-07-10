@@ -9,7 +9,7 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
     this->setFixedSize(800, 480);
-    this->setWindowTitle(tr("上海方堰CAN固件下载工具 Ver1.0.0"));
+    this->setWindowTitle(tr("上海方堰CAN固件下载工具 Ver1.0.1"));
     ui->statusBar->showMessage("欢迎使用上海方堰CAN固件下载工具!", 8000);
     //ui->comboBox_selectCan->setCurrentIndex(1);
     ui->label_firmwareType->setText("未知类型");
@@ -53,10 +53,10 @@ void MainWindow::on_clearDisplayAction_triggered()
 void MainWindow::on_aboutAction_triggered()
 {
     QString AboutStr;
-    AboutStr = "S12 USB-CAN Bootloader 1.0.0\n";
+    AboutStr = "上海方堰CAN固件下载工具 Ver1.0.1\n";
     AboutStr.append("Shanghai Fangyan 2015-2017 Copyright\n");
-    AboutStr.append("Hardware Support: S12 USB-CAN Adapter");
-    QMessageBox::about(this,"About S12 USB-CAN Bootloader",AboutStr);
+    AboutStr.append("Hardware Support: CANalyst-II");
+    QMessageBox::about(this,"About CANalyst-II USB-CAN Bootloader",AboutStr);
 }
 
 void MainWindow::on_actionHelper_triggered()
@@ -90,6 +90,7 @@ void MainWindow::on_comboBox_selectCan_currentIndexChanged(int index)
         m_nCanIndex = 1;
         outputInformation(tr("当前已选择CAN2通道"));
     }
+    on_pushButton_closeCan_clicked();
 }
 
 void MainWindow::on_pushButton_openCan_clicked()
