@@ -8,7 +8,7 @@ QT       += core gui
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
-TARGET   = BurnTool
+TARGET   = FY-BurnTool
 TEMPLATE = app
 
 win32:LIBS += -L$$PWD/../lib/ -lControlCAN
