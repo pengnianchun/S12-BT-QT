@@ -329,6 +329,7 @@ void MainWindow::on_executeFirmwarePushButton_clicked()
 
 void MainWindow::on_comboBox_selectDevice_currentIndexChanged(int index)
 {
+
     if(0 == index) {
         m_nodeAddr = CanHelper::FY169;
     } else if(1 == index){
@@ -338,11 +339,18 @@ void MainWindow::on_comboBox_selectDevice_currentIndexChanged(int index)
         m_nodeAddr = CanHelper::BigDog;
         outputInformation(tr("当前已选择大模块"));
     }
+    //将一些按钮灰度化
+    ui->updateFirmwarePushButton->setEnabled(false); //更新固件
+    ui->executeFirmwarePushButton->setEnabled(false); //执行固件
 }
 
 //连接设备
 void MainWindow::on_pushButton_openDevice_clicked()
 {
+
+    //将一些按钮灰度化
+    ui->updateFirmwarePushButton->setEnabled(false); //更新固件
+    ui->executeFirmwarePushButton->setEnabled(false); //执行固件
 
     int ret = scanNode(tr("连接设备"));
     if (ret < 0) {
@@ -404,7 +412,7 @@ int MainWindow::scanNode(const QString &text)
 {
     QString firmware;
     QString version;
-
+    displaylabelTag(firmware, version);
     //
     QProgressDialog scanNodeProcess(text + "中...",QStringLiteral("取消"),0,100,this);
     scanNodeProcess.setWindowTitle(text);
