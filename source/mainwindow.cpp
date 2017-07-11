@@ -9,7 +9,7 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
     this->setFixedSize(800, 480);
-    this->setWindowTitle(tr("上海方堰CAN固件下载工具 Ver1.0.1"));
+    this->setWindowTitle(tr("上海方堰CAN固件下载工具 Ver1.0.2"));
     ui->statusBar->showMessage("欢迎使用上海方堰CAN固件下载工具!", 8000);
     //ui->comboBox_selectCan->setCurrentIndex(1);
     ui->label_firmwareType->setText("未知类型");
@@ -53,7 +53,7 @@ void MainWindow::on_clearDisplayAction_triggered()
 void MainWindow::on_aboutAction_triggered()
 {
     QString AboutStr;
-    AboutStr = "上海方堰CAN固件下载工具 Ver1.0.1\n";
+    AboutStr = "上海方堰CAN固件下载工具 Ver1.0.2\n";
     AboutStr.append("Shanghai Fangyan 2015-2017 Copyright\n");
     AboutStr.append("Hardware Support: CANalyst-II");
     QMessageBox::about(this,"About CANalyst-II USB-CAN Bootloader",AboutStr);
@@ -189,7 +189,7 @@ void MainWindow::on_updateFirmwarePushButton_clicked()
 
         qDebug() << "跳转到BootLoader层成功"; // 这个要显示在界面上面
         outputInformation(tr("跳转到BootLoader层成功"));
-
+        Sleep(500); // 等待一段时间
         // 重新扫描设备
         QProgressDialog scanNodeProcess(QStringLiteral("重新扫描节点..."),QStringLiteral("取消"),0,100,this);
         scanNodeProcess.setWindowTitle(QStringLiteral("扫描节点"));
@@ -298,7 +298,7 @@ void MainWindow::on_executeFirmwarePushButton_clicked()
     QString oldVersion = m_version;
     int ret = -1;
     ret = helper->excuteApp(m_nodeAddr, 0);
-    Sleep(500);
+    Sleep(500); //先等待一段时间，目的是让设备跳过去
     ret = scanNode("跳转");
     if (ret < 0) {
         qWarning() << "设备跳转失败";
