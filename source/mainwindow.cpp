@@ -28,9 +28,9 @@ MainWindow::MainWindow(QWidget *parent) :
 
     QFont font("Microsoft YaHei", 12, 45);
     ui->labelCurrentTime->setFont(font);
-    QPalette palette;
-    palette.setColor(QPalette::WindowText,Qt::lightGray);
-    ui->label_valid->setPalette(palette);
+    //QPalette palette;
+    //palette.setColor(QPalette::WindowText,Qt::lightGray);
+    ui->milesLineEdit->setPlaceholderText(QStringLiteral("请输入0-9数字"));
 
     QValidator *validator=new QIntValidator(0,99999999,this);
     ui->milesLineEdit->setValidator(validator);
