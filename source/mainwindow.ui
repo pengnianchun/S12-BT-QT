@@ -334,7 +334,7 @@
      <enum>QTabWidget::Triangular</enum>
     </property>
     <property name="currentIndex">
-     <number>1</number>
+     <number>0</number>
     </property>
     <property name="usesScrollButtons">
      <bool>true</bool>
@@ -487,7 +487,7 @@
       <widget class="QPushButton" name="pushButton_sync">
        <property name="geometry">
         <rect>
-         <x>290</x>
+         <x>280</x>
          <y>30</y>
          <width>121</width>
          <height>31</height>
@@ -533,7 +533,7 @@
         <rect>
          <x>120</x>
          <y>30</y>
-         <width>161</width>
+         <width>111</width>
          <height>31</height>
         </rect>
        </property>
@@ -566,7 +566,7 @@
       <widget class="QPushButton" name="pushButton_WriteMiles">
        <property name="geometry">
         <rect>
-         <x>330</x>
+         <x>280</x>
          <y>30</y>
          <width>121</width>
          <height>31</height>
@@ -579,14 +579,14 @@
       <widget class="QLabel" name="label_km">
        <property name="geometry">
         <rect>
-         <x>290</x>
+         <x>230</x>
          <y>30</y>
          <width>31</width>
          <height>31</height>
         </rect>
        </property>
        <property name="text">
-        <string>KM</string>
+        <string> KM</string>
        </property>
       </widget>
      </widget>
