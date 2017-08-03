@@ -7,6 +7,7 @@
 #include <QFileDialog>
 #include <QDateTime>
 #include <QDebug>
+#include <QTimer>
 #include "canhelper.h"
 #include "devaddrinputdialog.h"
 
@@ -27,6 +28,7 @@ private slots:
 
     void on_openFirmwareFileAction_triggered();
 
+    void onTimerOut();
 
     void on_clearDisplayAction_triggered();
 
@@ -46,11 +48,15 @@ private slots:
 
     void on_executeFirmwarePushButton_clicked();
 
-    void outputInformation(QString log);
+    void outputInformation(QString log, QColor rgb="Black");
 
     void on_comboBox_selectDevice_currentIndexChanged(int index);
 
     void on_pushButton_openDevice_clicked();
+
+    void on_pushButton_sync_clicked();
+
+    void on_pushButton_WriteMiles_clicked();
 
 private:
     void displaylabelTag(QString &firmware, QString &version);
@@ -72,8 +78,10 @@ private:
     bool displayFlag = false;
     qint64 deviceState = 0;
     qint64 stepCount = 0;
+    qint64 writeMile = 0;
     CanHelper *helper;
     QLabel  *labelTag;
+    QTimer  *timer;
     QString m_firmware;
     QString m_version;
 };
