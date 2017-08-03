@@ -1,6 +1,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include <QDesktopServices>
+#include <QValidator>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -22,20 +23,52 @@ MainWindow::MainWindow(QWidget *parent) :
     labelTag = new QLabel();
     ui->statusBar->addPermanentWidget(labelTag);
     initButtion(false);
+
+    ui->tab_widget->setCurrentIndex(0);
+
+    QFont font("Microsoft YaHei", 12, 45);
+    ui->labelCurrentTime->setFont(font);
+    QPalette palette;
+    palette.setColor(QPalette::WindowText,Qt::lightGray);
+    ui->label_valid->setPalette(palette);
+
+    QValidator *validator=new QIntValidator(0,99999999,this);
+    ui->milesLineEdit->setValidator(validator);
+    ui->milesLineEdit->setMaxLength(8);
+    ui->milesLineEdit->setAlignment(Qt::AlignRight);
+    ui->milesLineEdit->setFont(font);
+    ui->label_km->setFont(font);
+
+    ui->tab_widget->setStyleSheet("QTabBar::tab{height:24; width:100}");
+    onTimerOut();
+    timer = new QTimer();
+    timer->setInterval(1000);
+    timer->start();
+    connect(timer, SIGNAL(timeout()), this, SLOT(onTimerOut()));
 }
 
 MainWindow::~MainWindow()
 {
+    if(labelTag!=NULL) {
+        delete labelTag;
+        labelTag = NULL;
+    }
+    if(timer!=NULL) {
+        timer->stop();
+        delete timer;
+        timer = NULL;
+    }
     helper->close();
     delete helper;
     delete ui;
 }
 
-void MainWindow::outputInformation(QString log) {
+void MainWindow::outputInformation(QString log, QColor rgb) {
     QString temp = "";
     qDebug()<<" --- echo text = "<<log;
     temp.append(QDateTime::currentDateTime().toString("[MM/dd hh:mm:ss:zzz]   "));
     temp.append(log);
+    ui->textEdit_outputLog->setTextColor(rgb);
     ui->textEdit_outputLog->append(temp);
 }
 
@@ -73,7 +106,6 @@ void MainWindow::on_actionHelper_triggered()
     }
 }
 
-
 void MainWindow::on_exitAction_triggered()
 {
     this->close();
@@ -99,7 +131,7 @@ void MainWindow::on_pushButton_openCan_clicked()
     if ( -1 == helper->open(m_nCanIndex) ) {
         tipsInfo = "CAN设备打开失败 !";
         ui->statusBar->showMessage(tipsInfo, 3000);
-        outputInformation(tipsInfo);
+        outputInformation(tipsInfo, Qt::red);
         QMessageBox msgBox(this);
         msgBox.setWindowTitle(tr("提示"));
         msgBox.setIcon(QMessageBox::Warning);
@@ -108,7 +140,6 @@ void MainWindow::on_pushButton_openCan_clicked()
         return;
     }
     tipsInfo = "CAN设备打开成功 !";
-    //将一些按钮灰度化
 
     //将一些按钮灰度化
     ui->pushButton_openCan->setEnabled(false); //打开设备
@@ -119,6 +150,9 @@ void MainWindow::on_pushButton_openCan_clicked()
 
     ui->statusBar->showMessage(tipsInfo, 3000);
     outputInformation(tipsInfo);
+
+    displayFlag = true;
+    stepCount = 0;
 }
 
 void MainWindow::on_pushButton_closeCan_clicked()
@@ -143,6 +177,9 @@ void MainWindow::on_pushButton_closeCan_clicked()
 
     ui->statusBar->showMessage(tipsInfo, 3000);
     outputInformation(tipsInfo);
+
+    displayFlag = true;
+    stepCount = 0;
 }
 
 void MainWindow::on_openFirmwareFilePushButton_clicked()
@@ -463,3 +500,109 @@ void MainWindow::initButtion(bool inited)
 
 }
 
+void MainWindow::on_pushButton_sync_clicked()
+{
+    VCI_CAN_OBJ sendbuf[1];
+    sendbuf->DataLen = 8;
+    sendbuf->SendType = 0;
+    sendbuf->ExternFlag = 1;
+    sendbuf->RemoteFlag = 0;
+    sendbuf->ID = 0x00000888;
+
+    QString dataBuffer = "136 136";
+    QString dateString = QDateTime::currentDateTime().toString(" hh mm yy MM dd ");
+    dataBuffer.append(dateString);
+    dataBuffer.append("00");
+    qDebug()<<" --- data buffer = "<<dataBuffer;
+    QStringList list;
+    list.clear();
+    list = dataBuffer.split(" ");
+
+    qint64 temp = 0;
+    for(int i=0; i<2; i++) {
+        QString dat = list.at(i);
+        temp = dat.toInt();
+        sendbuf->Data[i] = temp;
+    }
+
+    for(int i=2; i<8; i++) {
+        QString dat = list.at(i);
+        temp = dat.toInt();
+        sendbuf->Data[i] = ((temp/10)&0x0F)<<4;
+        sendbuf->Data[i] |= (temp%10)&0x0F;
+    }
+
+    qint64 flag=VCI_Transmit(m_DevType, m_DevIndex, m_nCanIndex, sendbuf, 1);
+    if(flag<1)
+    {
+        //ui->labelTips->setText(tr("同步时间失败"));
+        outputInformation(tr("同步时间失败"),Qt::red);
+        displayFlag = true;
+        stepCount = 0;
+        if(flag==-1){
+            //QMessageBox::warning(this,QStringLiteral("警告"),QStringLiteral("设备打开失败"));
+            return;
+        } else if(flag==0){
+            //QMessageBox::warning(this,QStringLiteral("警告"),QStringLiteral("发送报文失败"));
+            return;
+        }
+    } else {
+        if(1 == flag) {
+            outputInformation(tr("同步时间成功,请检查是否已更新"),Qt::green);
+            //ui->labelTips->setText(tr("同步时间成功,请检查是否已更新"));
+        } else {
+            outputInformation(tr("同步时间失败"),Qt::red);
+            //ui->labelTips->setText(tr("同步时间失败"));
+        }
+        displayFlag = true;
+        stepCount = 0;
+        qDebug()<<" --- send message result = "<<flag;
+    }
+    QCoreApplication::processEvents(QEventLoop::AllEvents);
+}
+
+void MainWindow::onTimerOut() {
+    QDateTime time = QDateTime::currentDateTime();
+    QString str = time.toString("yyyy-MM-dd hh:mm:ss");
+    ui->labelCurrentTime->setText(str);
+    if(true == displayFlag) {
+        stepCount++;
+        if(stepCount>5) {
+            displayFlag = false;
+            stepCount = 0;
+        }
+    }
+    deviceState = VCI_ConnectDevice(m_DevType, m_DevIndex);
+    if(0 == deviceState) {
+        VCI_CloseDevice(m_DevType, m_DevIndex);
+        ui->pushButton_sync->setEnabled(false);
+    }
+}
+
+void MainWindow::on_pushButton_WriteMiles_clicked()
+{
+    if(ui->milesLineEdit->text().toInt() <=0){
+        QMessageBox msgBox(this);
+        msgBox.setWindowTitle(tr("警告"));
+        msgBox.setIcon(QMessageBox::Warning);
+        msgBox.setText("请输入里程数！\t\t\n");
+        msgBox.exec();
+        return;
+    } else {
+        writeMile = ui->milesLineEdit->text().toInt();
+    }
+
+    QMessageBox msgBox(this);
+    msgBox.setFixedWidth(300);
+    msgBox.setWindowTitle(tr("提示"));
+    msgBox.setText(tr("\t\t\n你确定要写入当前里程:  %1  \t\n").arg(QString::number(writeMile)));
+    msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
+    msgBox.setDefaultButton(QMessageBox::Save);
+    int ret = msgBox.exec();
+    if(QMessageBox::No == ret) {
+        outputInformation(tr("当前里程尚未写入!"));
+        return;
+    }
+
+    //写入里程 Todo code here
+}
