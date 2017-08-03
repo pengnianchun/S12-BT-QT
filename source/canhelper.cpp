@@ -82,6 +82,10 @@ int CanHelper::close()
     return 0;
 }
 
+int CanHelper::connectState() {
+    return VCI_ConnectDevice(mDevType, mDevIndex);
+}
+
 int CanHelper::send(quint32 canId, CanFrameFormat format, QByteArray &data)
 {
     int ret = -1;
