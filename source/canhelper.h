@@ -27,6 +27,8 @@ public:
 
     int close();
 
+    int connectState();
+
     int send(quint32 canId, CanFrameFormat format, QByteArray &data);
 
     /*

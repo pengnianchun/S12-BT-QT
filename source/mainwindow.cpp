@@ -502,13 +502,7 @@ void MainWindow::initButtion(bool inited)
 
 void MainWindow::on_pushButton_sync_clicked()
 {
-    VCI_CAN_OBJ sendbuf[1];
-    sendbuf->DataLen = 8;
-    sendbuf->SendType = 0;
-    sendbuf->ExternFlag = 1;
-    sendbuf->RemoteFlag = 0;
-    sendbuf->ID = 0x00000888;
-
+    QByteArray array;
     QString dataBuffer = "136 136";
     QString dateString = QDateTime::currentDateTime().toString(" hh mm yy MM dd ");
     dataBuffer.append(dateString);
@@ -522,17 +516,17 @@ void MainWindow::on_pushButton_sync_clicked()
     for(int i=0; i<2; i++) {
         QString dat = list.at(i);
         temp = dat.toInt();
-        sendbuf->Data[i] = temp;
+        array[i] = temp;
     }
 
     for(int i=2; i<8; i++) {
         QString dat = list.at(i);
         temp = dat.toInt();
-        sendbuf->Data[i] = ((temp/10)&0x0F)<<4;
-        sendbuf->Data[i] |= (temp%10)&0x0F;
+        array[i] = ((temp/10)&0x0F)<<4;
+        array[i] = array[i]|((temp%10)&0x0F);
     }
 
-    qint64 flag=VCI_Transmit(m_DevType, m_DevIndex, m_nCanIndex, sendbuf, 1);
+    qint64 flag = helper->send(0x00000888, CanHelper::ExtendedFrameFormat, array);
     if(flag<1)
     {
         //ui->labelTips->setText(tr("同步时间失败"));
@@ -572,9 +566,9 @@ void MainWindow::onTimerOut() {
             stepCount = 0;
         }
     }
-    deviceState = VCI_ConnectDevice(m_DevType, m_DevIndex);
+    deviceState = helper->connectState();
     if(0 == deviceState) {
-        VCI_CloseDevice(m_DevType, m_DevIndex);
+        helper->close();
         ui->pushButton_sync->setEnabled(false);
     }
 }
