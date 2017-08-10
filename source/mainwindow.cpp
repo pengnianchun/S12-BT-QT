@@ -32,9 +32,9 @@ MainWindow::MainWindow(QWidget *parent) :
     //palette.setColor(QPalette::WindowText,Qt::lightGray);
     ui->milesLineEdit->setPlaceholderText(QStringLiteral("请输入0-9数字"));
 
-    QValidator *validator=new QIntValidator(0,99999999,this);
+    QValidator *validator=new QIntValidator(0,999999,this);
     ui->milesLineEdit->setValidator(validator);
-    ui->milesLineEdit->setMaxLength(8);
+    ui->milesLineEdit->setMaxLength(6);
     ui->milesLineEdit->setAlignment(Qt::AlignRight);
     ui->milesLineEdit->setFont(font);
     ui->label_km->setFont(font);
@@ -525,7 +525,6 @@ void MainWindow::on_pushButton_sync_clicked()
         array[i] = ((temp/10)&0x0F)<<4;
         array[i] = array[i]|((temp%10)&0x0F);
     }
-
     qint64 flag = helper->send(0x00000888, CanHelper::ExtendedFrameFormat, array);
     if(flag<1)
     {
@@ -599,4 +598,30 @@ void MainWindow::on_pushButton_WriteMiles_clicked()
     }
 
     //写入里程 Todo code here
+    if(QMessageBox::Yes == ret)
+    {
+        QString Mileage = ui->milesLineEdit->text();
+        long int IntMileage=Mileage.toInt();
+        QByteArray array;
+        QStringList list = Mileage.split("");
+       // array=Mileage.toInt();
+        list.append(Mileage);
+        //int IntMileage = Mileage.toInt();
+        array[0]=0x04;
+        for(int i = 1;i<5;i++)
+        {
+            array[i]=(IntMileage&0xff);
+            IntMileage=IntMileage>>8;
+        }
+  //      outputInformation(array,Qt::green);
+        qint64 flag = helper->send(0x00000610, CanHelper::ExtendedFrameFormat, array);
+        if(1 == flag) {
+            outputInformation(tr("里程修改成功,请检查是否已更新"),Qt::green);
+            //ui->labelTips->setText(tr("同步时间成功,请检查是否已更新"));
+        } else {
+            outputInformation(tr("里程修改失败"),Qt::red);
+            //ui->labelTips->setText(tr("同步时间失败"));
+        }
+        QCoreApplication::processEvents(QEventLoop::AllEvents);
+    }
 }
