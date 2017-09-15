@@ -23,6 +23,8 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
+public:
+    void outputInformation(QString log, QColor rgb="Black");
 private slots:
     void on_comboBox_selectCan_currentIndexChanged(int index);
 
@@ -48,7 +50,7 @@ private slots:
 
     void on_executeFirmwarePushButton_clicked();
 
-    void outputInformation(QString log, QColor rgb="Black");
+
 
     void on_comboBox_selectDevice_currentIndexChanged(int index);
 

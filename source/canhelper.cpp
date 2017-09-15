@@ -3,11 +3,18 @@
 #include <QDebug>
 #include <QProgressDialog>
 #include <QCoreApplication>
+#include <QDateTime>
+#include "mainwindow.h"
 
 CanHelper::CanHelper(QObject * parent )
     : QObject(parent)
 {
 
+}
+
+void CanHelper::attachMainWindow(MainWindow *window)
+{
+    mWindow = window;
 }
 
 // 初始化一次
@@ -158,22 +165,26 @@ int CanHelper::nodeCheck(DeviceType dType, QString &firmware,  QString &version,
     quint32 canId = (dType << 4) + 1;
     QByteArray array;
     ret = send(canId, CanHelper::ExtendedFrameFormat, array);
+    qWarning() << "nodeCheck, send:" << ret;
     if (ret < 0) {
         qWarning() << "in nodeCheck, send data Failed.";
         return ret;
     }
 
     array.resize(8);
+    for (int i = 0; i < 8; ++i) {
+        array[i] = 0;
+    }
     ret = recv(canId, CanHelper::ExtendedFrameFormat, array, timeOut);
-    //qDebug() << "nodeCheck, ret: "  << ret  ;
+    qDebug() << "nodeCheck, recv ret: "  << ret  ;
     if (ret <= 0) {
         return -1;
     }
 
     //quint32 appversion = quint32((array[0] << 12) | (array[1] << 8) | (array[2] << 4) | (array[3]));
-    version.sprintf("v%d.%d", ((array[0] << 4 ) | (array[1]) ), ((array[2] << 4) | array[3]));
-    quint32 type = quint32(array[7]);
 
+    quint32 type = quint32(array[7]);
+    version.sprintf("fangyan,id:%d,type:%d-v%d.%d", canId, type, ((array[0] << 4 ) | (array[1]) ), ((array[2] << 4) | array[3]));
     if (type == 0) {
         firmware = "Boot";
     }
@@ -344,19 +355,23 @@ int CanHelper::excuteApp(CanHelper::DeviceType dType, quint32 flashStartAddr)
 int CanHelper::recv(quint32 canId, CanHelper::CanFrameFormat format, QByteArray &data, quint32 timeout)
 {
     quint32 timeCnt = 0;
+    bool bFound = false;
     int recvLen = -1;
     VCI_CAN_OBJ rec[1];
     while(timeCnt < timeout) {
         rec[0].ID = 0;
-        //qDebug() << "recv data:" << recvLen << "," << timeCnt << "," << timeout;
+        qDebug() << "recv data:" << recvLen << "," << timeCnt << "," << timeout;
+      //  mWindow->outputInformation(tr("CanHelper 数据接收，len： %1, cnt: %2， timeout：%3").arg(recvLen).arg(timeCnt).arg(timeout));
         if ((recvLen=VCI_Receive(mDevType,mDevIndex,mCanIndex,rec,1,1))>0) {
+           mWindow->outputInformation(tr("CanHelper 已接收到数据，len： %1, canid: %2， recID:%3, cnt:%4").arg(recvLen).arg(canId).arg(rec[0].ID).arg(timeCnt));
            qDebug() << "recv data:" << recvLen << "," << canId << "," << rec[0].ID;
             if(canId == rec[0].ID) {
                 for(int i = 0; i < rec[0].DataLen; ++i) {
                     data[i] = rec[0].Data[i];
-                   // qDebug() << i << ":" << data.toHex();
+                    qDebug() << i << ":" << data.toHex();
                 }
                 qDebug() << "get data";
+                bFound = true;
                 timeout = 0;
             }
         }
@@ -364,6 +379,9 @@ int CanHelper::recv(quint32 canId, CanHelper::CanFrameFormat format, QByteArray 
         timeCnt ++;
     }
     Q_UNUSED(format);
+    if (!bFound) {
+        recvLen = -1;
+    }
     return recvLen;
 }
 

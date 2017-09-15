@@ -8,6 +8,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow),
     helper(new CanHelper)
 {
+    helper->attachMainWindow(this);
     ui->setupUi(this);
     this->setFixedSize(800, 480);
     this->setWindowTitle(tr("上海方堰CAN固件下载工具 Ver1.0.3"));
@@ -463,7 +464,7 @@ int MainWindow::scanNode(const QString &text)
     do{
 
         ret = helper->nodeCheck(m_nodeAddr, firmware, version, 50);
-
+        qWarning() << "in scanNode : " << ret;
         if(ret >= 0 ){
             bFind = true;
         }

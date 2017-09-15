@@ -5,6 +5,7 @@
 #include <QThread>
 #include "controlcan.h"
 
+class MainWindow;
 class CanHelper : public QObject
 {
     Q_OBJECT
@@ -23,6 +24,8 @@ public:
     };
 
 public:
+    void attachMainWindow(MainWindow *window);
+
     int open(qint64 canIndex);
 
     int close();
@@ -63,6 +66,8 @@ private:
     DWORD mDevType = VCI_USBCAN2; // 适配器设备类型定义, 这个一般不用动
     qint64 mDevIndex = 0; // 设备索引，比如当只有一个USB-CAN适配器时，索引号为0，这时再插入一个USB-CAN适配器那么后面插入的这个设备索引号就是1，以此类推
     qint64 mCanIndex = 0; // can索引号： 0-> CAN1, 1-> CAN2
+
+    MainWindow * mWindow;
 
 };
 
