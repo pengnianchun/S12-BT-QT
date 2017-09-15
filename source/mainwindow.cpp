@@ -10,7 +10,7 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
     this->setFixedSize(800, 480);
-    this->setWindowTitle(tr("上海方堰CAN固件下载工具 Ver1.0.2"));
+    this->setWindowTitle(tr("上海方堰CAN固件下载工具 Ver1.0.3"));
     ui->statusBar->showMessage("欢迎使用上海方堰CAN固件下载工具!", 8000);
     //ui->comboBox_selectCan->setCurrentIndex(1);
     ui->label_firmwareType->setText("未知类型");
@@ -86,7 +86,7 @@ void MainWindow::on_clearDisplayAction_triggered()
 void MainWindow::on_aboutAction_triggered()
 {
     QString AboutStr;
-    AboutStr = "上海方堰CAN固件下载工具 Ver1.0.2\n";
+    AboutStr = "上海方堰CAN固件下载工具 Ver1.0.3\n";
     AboutStr.append("Shanghai Fangyan 2015-2017 Copyright\n");
     AboutStr.append("Hardware Support: CANalyst-II");
     QMessageBox::about(this,"About CANalyst-II USB-CAN Bootloader",AboutStr);

@@ -347,7 +347,7 @@ int CanHelper::recv(quint32 canId, CanHelper::CanFrameFormat format, QByteArray 
     int recvLen = -1;
     VCI_CAN_OBJ rec[1];
     while(timeCnt < timeout) {
-        rec[1].ID = 0;
+        rec[0].ID = 0;
         //qDebug() << "recv data:" << recvLen << "," << timeCnt << "," << timeout;
         if ((recvLen=VCI_Receive(mDevType,mDevIndex,mCanIndex,rec,1,1))>0) {
            qDebug() << "recv data:" << recvLen << "," << canId << "," << rec[0].ID;
