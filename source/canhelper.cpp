@@ -237,7 +237,7 @@ int CanHelper::eraseFlash(CanHelper::DeviceType dType, quint32 flashStartAddr, q
     int j = 0;
     do{
 
-        ret = recv(canId, CanHelper::ExtendedFrameFormat, retArray, 50);
+        ret = recv(canId, CanHelper::ExtendedFrameFormat, retArray, 300); //100ms超时一次
         qDebug() << "in erase flash, ret:" << ret;
         if(ret > 0 ){
             bFind = true;
@@ -354,18 +354,23 @@ int CanHelper::excuteApp(CanHelper::DeviceType dType, quint32 flashStartAddr)
  */
 int CanHelper::recv(quint32 canId, CanHelper::CanFrameFormat format, QByteArray &data, quint32 timeout)
 {
+    QTime timer;
+    timer.start();
     quint32 timeCnt = 0;
     bool bFound = false;
     int recvLen = -1;
     VCI_CAN_OBJ rec[1];
-    while(timeCnt < timeout) {
+    while(timer.elapsed() < timeout) {
         rec[0].ID = 0;
         qDebug() << "recv data:" << recvLen << "," << timeCnt << "," << timeout;
       //  mWindow->outputInformation(tr("CanHelper 数据接收，len： %1, cnt: %2， timeout：%3").arg(recvLen).arg(timeCnt).arg(timeout));
+        QCoreApplication::processEvents();
         if ((recvLen=VCI_Receive(mDevType,mDevIndex,mCanIndex,rec,1,1))>0) {
-           mWindow->outputInformation(tr("CanHelper 已接收到数据，len： %1, canid: %2， recID:%3, cnt:%4").arg(recvLen).arg(canId).arg(rec[0].ID).arg(timeCnt));
+
            qDebug() << "recv data:" << recvLen << "," << canId << "," << rec[0].ID;
+           mWindow->outputInformation(tr("CanHelper 已接收到数据，len： %1, canid: %2， recID:%3, cnt:%4, timer's elapesd:%5").arg(recvLen).arg(canId).arg(rec[0].ID).arg(timeCnt).arg(timer.elapsed()));
             if(canId == rec[0].ID) {
+
                 for(int i = 0; i < rec[0].DataLen; ++i) {
                     data[i] = rec[0].Data[i];
                     qDebug() << i << ":" << data.toHex();
@@ -378,6 +383,26 @@ int CanHelper::recv(quint32 canId, CanHelper::CanFrameFormat format, QByteArray 
         Sleep(1);
         timeCnt ++;
     }
+//    while(timeCnt < timeout) {
+//        rec[0].ID = 0;
+//        qDebug() << "recv data:" << recvLen << "," << timeCnt << "," << timeout;
+//      //  mWindow->outputInformation(tr("CanHelper 数据接收，len： %1, cnt: %2， timeout：%3").arg(recvLen).arg(timeCnt).arg(timeout));
+//        if ((recvLen=VCI_Receive(mDevType,mDevIndex,mCanIndex,rec,1,1))>0) {
+//           mWindow->outputInformation(tr("CanHelper 已接收到数据，len： %1, canid: %2， recID:%3, cnt:%4").arg(recvLen).arg(canId).arg(rec[0].ID).arg(timeCnt));
+//           qDebug() << "recv data:" << recvLen << "," << canId << "," << rec[0].ID;
+//            if(canId == rec[0].ID) {
+//                for(int i = 0; i < rec[0].DataLen; ++i) {
+//                    data[i] = rec[0].Data[i];
+//                    qDebug() << i << ":" << data.toHex();
+//                }
+//                qDebug() << "get data";
+//                bFound = true;
+//                timeout = 0;
+//            }
+//        }
+//        Sleep(1);
+//        timeCnt ++;
+//    }
     Q_UNUSED(format);
     if (!bFound) {
         recvLen = -1;

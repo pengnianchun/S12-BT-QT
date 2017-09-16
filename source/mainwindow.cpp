@@ -207,7 +207,7 @@ void MainWindow::on_updateFirmwarePushButton_clicked()
     int ret = -1;
     QString firmware, version;
 
-    ret = helper->nodeCheck(m_nodeAddr, firmware, version, 50);
+    ret = helper->nodeCheck(m_nodeAddr, firmware, version, 5000);
     if (ret == -1) {
         qWarning() << "设备扫描失败1";
         outputInformation(tr("设备扫描失败 ......"));
@@ -238,7 +238,7 @@ void MainWindow::on_updateFirmwarePushButton_clicked()
         int i = 0;
         do{
 
-            ret = helper->nodeCheck(m_nodeAddr, firmware, version, 50);
+            ret = helper->nodeCheck(m_nodeAddr, firmware, version, 200);
 
             if(ret >= 0 ){
                 bFind = true;
@@ -262,7 +262,7 @@ void MainWindow::on_updateFirmwarePushButton_clicked()
 
     // 2. 擦除 app
     qDebug() << "before erase flash.";
-    ret = helper->eraseFlash(m_nodeAddr, 0, 0, 10000);
+    ret = helper->eraseFlash(m_nodeAddr, 0, 0, 50000);
     if (ret < 0) {
         outputInformation(tr("擦除Flash数据失败！"));
         QMessageBox msgBox(this);
@@ -302,7 +302,7 @@ void MainWindow::on_updateFirmwarePushButton_clicked()
        read_data_num += 2;
        QByteArray array((const char*)FirmwareData, read_data_num);
        //qDebug() << "array size:" << array.size() << ", read num:" << read_data_num;
-       ret = helper->updateFirmware(m_nodeAddr, 0, array, 5000);
+       ret = helper->updateFirmware(m_nodeAddr, 0, array, 50000);
        if (ret < 0) {
            outputInformation(tr("写Flash数据失败！"));
            QMessageBox msgBox(this);
@@ -463,7 +463,7 @@ int MainWindow::scanNode(const QString &text)
     int ret = -1;
     do{
 
-        ret = helper->nodeCheck(m_nodeAddr, firmware, version, 50);
+        ret = helper->nodeCheck(m_nodeAddr, firmware, version, 50); // 50ms 超时一次， 执行300次
         qWarning() << "in scanNode : " << ret;
         if(ret >= 0 ){
             bFind = true;
