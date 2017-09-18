@@ -73,6 +73,11 @@ void MainWindow::outputInformation(QString log, QColor rgb) {
     ui->textEdit_outputLog->append(temp);
 }
 
+bool MainWindow::isDebug()
+{
+    return debugMode;
+}
+
 void MainWindow::on_openFirmwareFileAction_triggered()
 {
     on_openFirmwareFilePushButton_clicked();

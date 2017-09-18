@@ -25,6 +25,8 @@ public:
 
 public:
     void outputInformation(QString log, QColor rgb="Black");
+    bool isDebug();
+
 private slots:
     void on_comboBox_selectCan_currentIndexChanged(int index);
 

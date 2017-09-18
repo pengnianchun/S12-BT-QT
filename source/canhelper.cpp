@@ -368,12 +368,18 @@ int CanHelper::recv(quint32 canId, CanHelper::CanFrameFormat format, QByteArray 
         if ((recvLen=VCI_Receive(mDevType,mDevIndex,mCanIndex,rec,1,1))>0) {
 
            qDebug() << "recv data:" << recvLen << "," << canId << "," << rec[0].ID;
-           mWindow->outputInformation(tr("CanHelper 已接收到数据，len： %1, canid: %2， recID:%3, cnt:%4, timer's elapesd:%5").arg(recvLen).arg(canId).arg(rec[0].ID).arg(timeCnt).arg(timer.elapsed()));
+           if (mWindow->isDebug()) {
+               mWindow->outputInformation(tr("已接收到CAN数据，len： %1, canid: %2， recID:%3, cnt:%4, timer's elapesd:%5").arg(recvLen).arg(canId).arg(rec[0].ID).arg(timeCnt).arg(timer.elapsed()));
+           }
+
             if(canId == rec[0].ID) {
 
                 for(int i = 0; i < rec[0].DataLen; ++i) {
                     data[i] = rec[0].Data[i];
                     qDebug() << i << ":" << data.toHex();
+                }
+                if (mWindow->isDebug()) {
+                    mWindow->outputInformation(tr("已接收到目标数据，len： %1, canid: %2， recID:%3, cnt:%4, timer's elapesd:%5").arg(recvLen).arg(canId).arg(rec[0].ID).arg(timeCnt).arg(timer.elapsed()));
                 }
                 qDebug() << "get data";
                 bFound = true;
