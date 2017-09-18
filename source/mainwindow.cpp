@@ -112,6 +112,17 @@ void MainWindow::on_exitAction_triggered()
     this->close();
 }
 
+void MainWindow::on_debugModeAction_triggered()
+{
+    qDebug()<<" --- debug mode switch";
+    debugMode = !debugMode;
+    if(debugMode) {
+       ui->debugModeAction->setIcon(QIcon(":/images/checked.png"));
+    } else {
+       ui->debugModeAction->setIcon(QIcon(":/images/unchecked.png"));
+    }
+}
+
 void MainWindow::on_comboBox_selectCan_currentIndexChanged(int index)
 {
     if(0 == index) {

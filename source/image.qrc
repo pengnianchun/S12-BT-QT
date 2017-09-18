@@ -127,5 +127,7 @@
         <file>images/calculator.ico</file>
         <file>images/AutoBaudRate.ico</file>
         <file>images/CAN.ico</file>
+        <file>images/checked.png</file>
+        <file>images/unchecked.png</file>
     </qresource>
 </RCC>

@@ -40,6 +40,8 @@ private slots:
 
     void on_exitAction_triggered();
 
+    void on_debugModeAction_triggered();
+
     void on_pushButton_openCan_clicked();
 
     void on_pushButton_closeCan_clicked();
@@ -49,8 +51,6 @@ private slots:
     void on_updateFirmwarePushButton_clicked();
 
     void on_executeFirmwarePushButton_clicked();
-
-
 
     void on_comboBox_selectDevice_currentIndexChanged(int index);
 
@@ -77,6 +77,7 @@ private:
     DWORD Reserved = 0;
     CanHelper::DeviceType m_nodeAddr = CanHelper::FY169;
 
+    bool debugMode = false;
     bool displayFlag = false;
     qint64 deviceState = 0;
     qint64 stepCount = 0;

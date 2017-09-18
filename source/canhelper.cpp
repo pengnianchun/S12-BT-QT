@@ -360,7 +360,7 @@ int CanHelper::recv(quint32 canId, CanHelper::CanFrameFormat format, QByteArray 
     bool bFound = false;
     int recvLen = -1;
     VCI_CAN_OBJ rec[1];
-    while(timer.elapsed() < timeout) {
+    while(((uint)timer.elapsed()) < timeout) {
         rec[0].ID = 0;
         qDebug() << "recv data:" << recvLen << "," << timeCnt << "," << timeout;
       //  mWindow->outputInformation(tr("CanHelper 数据接收，len： %1, cnt: %2， timeout：%3").arg(recvLen).arg(timeCnt).arg(timeout));

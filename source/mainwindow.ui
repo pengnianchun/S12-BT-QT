@@ -636,6 +636,7 @@
    <addaction name="openFirmwareFileAction"/>
    <addaction name="clearDisplayAction"/>
    <addaction name="actionHelper"/>
+   <addaction name="debugModeAction"/>
    <addaction name="separator"/>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
@@ -691,6 +692,15 @@
    </property>
    <property name="text">
     <string>操作说明</string>
+   </property>
+  </action>
+  <action name="debugModeAction">
+   <property name="icon">
+    <iconset resource="image.qrc">
+     <normaloff>:/images/unchecked.png</normaloff>:/images/unchecked.png</iconset>
+   </property>
+   <property name="text">
+    <string>调试开关</string>
    </property>
   </action>
  </widget>
