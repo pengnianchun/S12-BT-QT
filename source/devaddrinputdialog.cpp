@@ -43,6 +43,8 @@ int DevAddrInputDialog::get_device_addr() {
         addr = 0x12;
     } else if (1 == ui->comboBox->currentIndex()) {
         addr = 0x13;
+    } else if (2 == ui->comboBox->currentIndex()) {
+        addr = 0x14;
     }
     return addr;
 }

@@ -65,7 +65,7 @@ private slots:
 private:
     void displaylabelTag(QString &firmware, QString &version);
 
-    int scanNode(const QString &text);
+    int scanNode(const QString &text, QString &firmware, QString &version);
 
     void initButtion(bool inited);
 

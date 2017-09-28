@@ -20,7 +20,8 @@ public:
 
     enum DeviceType {
         FY169  = 0x12,
-        BigDog = 0x13
+        BigDog = 0x13,
+        Virtual= 0x14
     };
 
 public:

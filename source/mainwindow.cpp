@@ -11,7 +11,7 @@ MainWindow::MainWindow(QWidget *parent) :
     helper->attachMainWindow(this);
     ui->setupUi(this);
     this->setFixedSize(800, 480);
-    this->setWindowTitle(tr("上海方堰CAN固件下载工具 Ver1.0.3"));
+    this->setWindowTitle(tr("上海方堰CAN固件下载工具 Ver1.0.5"));
     ui->statusBar->showMessage("欢迎使用上海方堰CAN固件下载工具!", 8000);
     //ui->comboBox_selectCan->setCurrentIndex(1);
     ui->label_firmwareType->setText("未知类型");
@@ -92,7 +92,7 @@ void MainWindow::on_clearDisplayAction_triggered()
 void MainWindow::on_aboutAction_triggered()
 {
     QString AboutStr;
-    AboutStr = "上海方堰CAN固件下载工具 Ver1.0.3\n";
+    AboutStr = "上海方堰CAN固件下载工具 Ver1.0.5\n";
     AboutStr.append("Shanghai Fangyan 2015-2017 Copyright\n");
     AboutStr.append("Hardware Support: CANalyst-II");
     QMessageBox::about(this,"About CANalyst-II USB-CAN Bootloader",AboutStr);
@@ -205,7 +205,7 @@ void MainWindow::on_openFirmwareFilePushButton_clicked()
     fileName=QFileDialog::getOpenFileName(this,
                                           tr("Open files"),
                                           "",
-                                          "S19 Files (*.s19);;Binary Files (*.bin);;Hex Files (*.hex);;All Files (*.*)");
+                                          "S19 Files (*.s19);;mhx Files (*.mhx);;Binary Files (*.bin);;Hex Files (*.hex);;All Files (*.*)");
     if(fileName.isNull()){
         return;
     }
@@ -222,8 +222,7 @@ void MainWindow::on_updateFirmwarePushButton_clicked()
 
     int ret = -1;
     QString firmware, version;
-
-    ret = helper->nodeCheck(m_nodeAddr, firmware, version, 5000);
+    ret = scanNode("扫描设备", firmware, version);
     if (ret == -1) {
         qWarning() << "设备扫描失败1";
         outputInformation(tr("设备扫描失败 ......"));
@@ -245,32 +244,9 @@ void MainWindow::on_updateFirmwarePushButton_clicked()
         outputInformation(tr("跳转到BootLoader层成功"));
         Sleep(500); // 等待一段时间
         // 重新扫描设备
-        QProgressDialog scanNodeProcess(QStringLiteral("重新扫描节点..."),QStringLiteral("取消"),0,100,this);
-        scanNodeProcess.setWindowTitle(QStringLiteral("扫描节点"));
-        scanNodeProcess.setModal(true);
-        scanNodeProcess.show();
-        QCoreApplication::processEvents(QEventLoop::AllEvents);
-        bool bFind = false;
-        int i = 0;
-        do{
-
-            ret = helper->nodeCheck(m_nodeAddr, firmware, version, 200);
-
-            if(ret >= 0 ){
-                bFind = true;
-            }
-            if(i>99) {
-                i = 0;
-            }
-            scanNodeProcess.setValue(i);
-            i++;
-            QCoreApplication::processEvents(QEventLoop::AllEvents);
-            if(scanNodeProcess.wasCanceled()){
-                bFind = true;
-                return;
-            }
-        } while(!bFind);
-
+        firmware = "";
+        version = "";
+        ret = scanNode("重新扫描节点", firmware, version);
         qDebug() << "扫描的设备：" << firmware << ", 版本：" << version; //这个显示在界面上
         displaylabelTag(firmware, version);
         outputInformation(tr("扫描的设备：固件类型: %1, 版本号: %2").arg(firmware).arg(version));
@@ -353,7 +329,8 @@ void MainWindow::on_executeFirmwarePushButton_clicked()
     int ret = -1;
     ret = helper->excuteApp(m_nodeAddr, 0);
     Sleep(500); //先等待一段时间，目的是让设备跳过去
-    ret = scanNode("跳转");
+    ret = scanNode("跳转", m_firmware, m_version);
+    displaylabelTag(m_firmware, m_version);
     if (ret < 0) {
         qWarning() << "设备跳转失败";
         outputInformation(tr("设备跳转失败"));
@@ -389,9 +366,12 @@ void MainWindow::on_comboBox_selectDevice_currentIndexChanged(int index)
     } else if(1 == index){
         m_nodeAddr = CanHelper::FY169;
         outputInformation(tr("当前已选择FY169仪表"));
-    } else {
+    } else if(2 == index){
         m_nodeAddr = CanHelper::BigDog;
         outputInformation(tr("当前已选择大模块"));
+    } else {
+        m_nodeAddr = CanHelper::Virtual;
+        outputInformation(tr("当前已选择虚拟仪表"));
     }
     //将一些按钮灰度化
     ui->updateFirmwarePushButton->setEnabled(false); //更新固件
@@ -405,8 +385,10 @@ void MainWindow::on_pushButton_openDevice_clicked()
     //将一些按钮灰度化
     ui->updateFirmwarePushButton->setEnabled(false); //更新固件
     ui->executeFirmwarePushButton->setEnabled(false); //执行固件
-
-    int ret = scanNode(tr("连接设备"));
+    QString firmware;
+    QString version;
+    int ret = scanNode(tr("连接设备"), firmware, version);
+    displaylabelTag(firmware, version);
     if (ret < 0) {
         outputInformation("没有找到可识别的设备!");
         QMessageBox msgBox(this);
@@ -437,6 +419,10 @@ void MainWindow::displaylabelTag(QString &firmware, QString &version)
         labelTagStr.append("当前选择设备: 大模块  ");
         ui->label_deviceType->setText("大模块");
         outputInformation(tr("当前已选择设备: 大模块"));
+    } else if(CanHelper::Virtual == m_nodeAddr) {
+        labelTagStr.append("当前选择设备: 虚拟仪表  ");
+        ui->label_deviceType->setText("虚拟仪表");
+        outputInformation(tr("当前已选择设备: 虚拟仪表"));
     }
 
     if(!firmware.isEmpty()) {
@@ -462,11 +448,10 @@ void MainWindow::displaylabelTag(QString &firmware, QString &version)
     m_version = version;
 }
 
-int MainWindow::scanNode(const QString &text)
+int MainWindow::scanNode(const QString &text, QString &firmware, QString &version)
 {
-    QString firmware;
-    QString version;
-    displaylabelTag(firmware, version);
+
+    //displaylabelTag(firmware, version);
     //
     QProgressDialog scanNodeProcess(text + "中...",QStringLiteral("取消"),0,100,this);
     scanNodeProcess.setWindowTitle(text);
@@ -479,7 +464,7 @@ int MainWindow::scanNode(const QString &text)
     int ret = -1;
     do{
 
-        ret = helper->nodeCheck(m_nodeAddr, firmware, version, 50); // 50ms 超时一次， 执行300次
+        ret = helper->nodeCheck(m_nodeAddr, firmware, version, 5); // 5ms 超时一次， 执行1000次
         qWarning() << "in scanNode : " << ret;
         if(ret >= 0 ){
             bFind = true;
@@ -488,8 +473,8 @@ int MainWindow::scanNode(const QString &text)
             i = 0;
             j++;
         }
-        if (j >= 3) { //循环了3次，说明没有设备连接
-            displaylabelTag(firmware, version);
+        if (j >= 10) { //循环了10次，说明没有设备连接
+            //displaylabelTag(firmware, version);
             return -1;
         }
         scanNodeProcess.setValue(i);
@@ -497,12 +482,12 @@ int MainWindow::scanNode(const QString &text)
         QCoreApplication::processEvents(QEventLoop::AllEvents);
         if(scanNodeProcess.wasCanceled()){
             bFind = true;
-            displaylabelTag(firmware, version);
+           // displaylabelTag(firmware, version);
             return -1;
         }
     } while(!bFind);
 
-    displaylabelTag(firmware, version);
+   // displaylabelTag(firmware, version);
     return 0;
 }
 

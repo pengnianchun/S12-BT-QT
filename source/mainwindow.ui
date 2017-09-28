@@ -168,6 +168,11 @@
        <string>大模块</string>
       </property>
      </item>
+     <item>
+      <property name="text">
+       <string>虚拟仪表</string>
+      </property>
+     </item>
     </widget>
     <widget class="QPushButton" name="pushButton_openDevice">
      <property name="geometry">
