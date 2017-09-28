@@ -294,7 +294,7 @@ void MainWindow::on_updateFirmwarePushButton_clicked()
        read_data_num += 2;
        QByteArray array((const char*)FirmwareData, read_data_num);
        //qDebug() << "array size:" << array.size() << ", read num:" << read_data_num;
-       ret = helper->updateFirmware(m_nodeAddr, 0, array, 50000);
+       ret = helper->updateFirmware(m_nodeAddr, 0, array, 5000);
        if (ret < 0) {
            outputInformation(tr("写Flash数据失败！"));
            QMessageBox msgBox(this);

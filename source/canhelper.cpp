@@ -237,7 +237,7 @@ int CanHelper::eraseFlash(CanHelper::DeviceType dType, quint32 flashStartAddr, q
     int j = 0;
     do{
 
-        ret = recv(canId, CanHelper::ExtendedFrameFormat, retArray, 300); //100ms超时一次
+        ret = recv(canId, CanHelper::ExtendedFrameFormat, retArray, 50); //50ms超时一次,执行200次
         qDebug() << "in erase flash, ret:" << ret;
         if(ret > 0 ){
             bFind = true;
@@ -249,7 +249,7 @@ int CanHelper::eraseFlash(CanHelper::DeviceType dType, quint32 flashStartAddr, q
         scanNodeProcess.setValue(i);
         i++;
         QCoreApplication::processEvents(QEventLoop::AllEvents);
-        if (j >= 2) {
+        if (j >= 20) {
             return -1;
         }
         if(scanNodeProcess.wasCanceled()){
