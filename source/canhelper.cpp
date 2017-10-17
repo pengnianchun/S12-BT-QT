@@ -184,7 +184,8 @@ int CanHelper::nodeCheck(DeviceType dType, QString &firmware,  QString &version,
     //quint32 appversion = quint32((array[0] << 12) | (array[1] << 8) | (array[2] << 4) | (array[3]));
 
     quint32 type = quint32(array[7]);
-    version.sprintf("fangyan,id:%d,type:%d-v%d.%d", canId, type, ((array[0] << 4 ) | (array[1]) ), ((array[2] << 4) | array[3]));
+   // version.sprintf("fangyan,id:%d,type:%d-v%d.%d", canId, type, ((array[0] << 4 ) | (array[1]) ), ((array[2] << 4) | array[3]));
+    version.sprintf("v%d.%d", ((array[0] << 4 ) | (array[1]) ), ((array[2] << 4) | array[3]));
     if (type == 0) {
         firmware = "Boot";
     }
