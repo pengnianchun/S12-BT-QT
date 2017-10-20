@@ -11,7 +11,7 @@ MainWindow::MainWindow(QWidget *parent) :
     helper->attachMainWindow(this);
     ui->setupUi(this);
     this->setFixedSize(800, 480);
-    this->setWindowTitle(tr("上海方堰CAN固件下载工具 Ver1.0.5"));
+    this->setWindowTitle(tr("上海方堰CAN固件下载工具 Ver1.0.6"));
     ui->statusBar->showMessage("欢迎使用上海方堰CAN固件下载工具!", 8000);
     //ui->comboBox_selectCan->setCurrentIndex(1);
     ui->label_firmwareType->setText("未知类型");
@@ -92,7 +92,7 @@ void MainWindow::on_clearDisplayAction_triggered()
 void MainWindow::on_aboutAction_triggered()
 {
     QString AboutStr;
-    AboutStr = "上海方堰CAN固件下载工具 Ver1.0.5\n";
+    AboutStr = "上海方堰CAN固件下载工具 Ver1.0.6\n";
     AboutStr.append("Shanghai Fangyan 2015-2017 Copyright\n");
     AboutStr.append("Hardware Support: CANalyst-II");
     QMessageBox::about(this,"About CANalyst-II USB-CAN Bootloader",AboutStr);
@@ -369,10 +369,14 @@ void MainWindow::on_comboBox_selectDevice_currentIndexChanged(int index)
     } else if(2 == index){
         m_nodeAddr = CanHelper::BigDog;
         outputInformation(tr("当前已选择大模块"));
-    } else {
+    } else if (3 == index){
         m_nodeAddr = CanHelper::Virtual;
         outputInformation(tr("当前已选择虚拟仪表"));
+    } else if (4 == index){
+        m_nodeAddr = CanHelper::RH850;
+        outputInformation(tr("当前已选择单芯片"));
     }
+
     //将一些按钮灰度化
     ui->updateFirmwarePushButton->setEnabled(false); //更新固件
     ui->executeFirmwarePushButton->setEnabled(false); //执行固件
@@ -423,6 +427,10 @@ void MainWindow::displaylabelTag(QString &firmware, QString &version)
         labelTagStr.append("当前选择设备: 虚拟仪表  ");
         ui->label_deviceType->setText("虚拟仪表");
         outputInformation(tr("当前已选择设备: 虚拟仪表"));
+    }else if(CanHelper::RH850 == m_nodeAddr) {
+        labelTagStr.append("当前选择设备: 单芯片  ");
+        ui->label_deviceType->setText("单芯片");
+        outputInformation(tr("当前已选择设备: 单芯片"));
     }
 
     if(!firmware.isEmpty()) {
