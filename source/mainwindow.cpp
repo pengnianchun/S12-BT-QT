@@ -11,7 +11,7 @@ MainWindow::MainWindow(QWidget *parent) :
     helper->attachMainWindow(this);
     ui->setupUi(this);
     this->setFixedSize(800, 480);
-    this->setWindowTitle(tr("上海方堰CAN固件下载工具 Ver1.0.6"));
+    this->setWindowTitle(tr("上海方堰CAN固件下载工具 Ver1.0.7"));
     ui->statusBar->showMessage("欢迎使用上海方堰CAN固件下载工具!", 8000);
     //ui->comboBox_selectCan->setCurrentIndex(1);
     ui->label_firmwareType->setText("未知类型");
@@ -92,7 +92,7 @@ void MainWindow::on_clearDisplayAction_triggered()
 void MainWindow::on_aboutAction_triggered()
 {
     QString AboutStr;
-    AboutStr = "上海方堰CAN固件下载工具 Ver1.0.6\n";
+    AboutStr = "上海方堰CAN固件下载工具 Ver1.0.7\n";
     AboutStr.append("Shanghai Fangyan 2015-2017 Copyright\n");
     AboutStr.append("Hardware Support: CANalyst-II");
     QMessageBox::about(this,"About CANalyst-II USB-CAN Bootloader",AboutStr);
@@ -584,7 +584,7 @@ void MainWindow::onTimerOut() {
 
 void MainWindow::on_pushButton_WriteMiles_clicked()
 {
-    if(ui->milesLineEdit->text().toInt() <=0){
+    if(ui->milesLineEdit->text().toInt() <0){
         QMessageBox msgBox(this);
         msgBox.setWindowTitle(tr("警告"));
         msgBox.setIcon(QMessageBox::Warning);
